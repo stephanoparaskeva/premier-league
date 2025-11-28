@@ -1,0 +1,16 @@
+{
+  "tabWidth": 2,
+  "printWidth": 100,
+  "useTabs": false,
+  "requireConfig": false,
+  "semi": true,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "bracketSpacing": true,
+  "jsxBracketSameLine": true,
+  "editor.formatOnSave": true,
+  "arrowParens": "avoid",
+  "trailingComma": "es5",
+  "proseWrap": "always",
+  "endOfLine": "lf"
+}

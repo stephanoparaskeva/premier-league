@@ -1,0 +1,16 @@
+/** @format */
+
+.message {
+  font-style: italic;
+}
+
+#root {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1rem;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
