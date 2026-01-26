@@ -68,3 +68,4 @@ Packages installed are minimal. You can add additional packages using `npm insta
 ## When you are done
 
 Once you have finished, please zip your solution (the whole premier-league folder, preferably delete node_modules before doing so) and send it back to us so we can review your code. Please do not upload your solution to GitHub as we do not want other candidates to copy existing solutions.
+# premier-league
