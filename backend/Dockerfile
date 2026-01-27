@@ -14,4 +14,4 @@ COPY . /app
 
 EXPOSE $BACKEND_PORT
 
-CMD ["sh", "/app/run.sh"]
+CMD ["npm", "run", "start"]

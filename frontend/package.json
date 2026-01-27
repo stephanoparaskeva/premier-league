@@ -1,7 +1,7 @@
 {
-  "name": "mollybet-frontend-takehome",
+  "name": "premier-league-frontend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Premier League Frontend",
   "main": "index.tsx",
   "scripts": {
     "build": "NODE_ENV=development webpack --watch --config webpack.config.js",

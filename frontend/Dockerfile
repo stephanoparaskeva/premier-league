@@ -12,4 +12,4 @@ COPY . /app
 
 EXPOSE $FRONTEND_PORT
 
-CMD ["sh", "/app/run.sh"]
+CMD ["npm", "run", "start"]

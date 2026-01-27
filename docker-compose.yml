@@ -1,18 +1,16 @@
-# TLS docs https://mindsers.blog/post/https-using-nginx-certbot-docker/
-
 services:
   backend:
     container_name: backend
     build:
-      context: ./backend
-      args:
-        BACKEND_PORT: 65000
+      context: ./ts-backend
     environment:
-      BACKEND_PORT: 65000
-    volumes:
-      - ./backend:/app
+      PORT: 8000
     ports:
-      - 65000:65000
+      - '8000:8000'
+    volumes:
+      - ./ts-backend:/app
+      - /app/node_modules
+    command: npm run dev
     restart: on-failure
 
   frontend:
@@ -20,12 +18,12 @@ services:
     build:
       context: ./frontend
       args:
-        FRONTEND_PORT: 65001
+        FRONTEND_PORT: 8001
     environment:
-      FRONTEND_PORT: 65001
-      BACKEND_PORT: 65000
+      FRONTEND_PORT: 8001
+      BACKEND_PORT: 8000
     volumes:
       - ./frontend/src:/app/src
     ports:
-      - 65001:65001
+      - 8001:8001
     restart: on-failure
