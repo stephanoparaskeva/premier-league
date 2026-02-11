@@ -11,8 +11,8 @@ import { retry } from './utilities/retry';
 const errorToast = (msg: string) =>
   toast(msg, { position: 'bottom-center', type: 'error', toastId: 'retry-toast' });
 
-const BACKEND_BASE_URL = "http://localhost:8000";
-const WS_URL = "ws://localhost:8000/matches/ws";
+const BACKEND_BASE_URL = `http://localhost:8000`;
+const WS_URL = `ws://localhost:8000/matches/ws`;
 const DEBOUNCE_MS = 200;
 const COMPETITION = 'Premier League';
 const COUNTRY = 'England';

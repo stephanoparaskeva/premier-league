@@ -22,11 +22,8 @@ const main = async (): Promise<void> => {
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   });
-
   await app.register(websocket);
-
   await app.register(randomFailurePlugin());
-
   await app.register(clubsRoutes({ clubs }), { prefix: "/clubs" });
 
   const generator = createMessageGenerator({ matches, clubsByName });
