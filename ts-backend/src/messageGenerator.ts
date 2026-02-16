@@ -69,8 +69,6 @@ export type MessageGenerator = {
   readonly addConnection: (ws: WebSocket) => Promise<void>
   readonly removeConnection: (ws: WebSocket) => Promise<void>
   readonly start: () => Promise<void>
-  readonly getCurrentDate: () => string
-  readonly setCurrentDate: (d: string) => void
 }
 
 export const createMessageGenerator = (args: {
@@ -80,13 +78,7 @@ export const createMessageGenerator = (args: {
 }): MessageGenerator => {
   const cfg: GeneratorConfig = { ...defaults, ...(args.config ?? {}) }
 
-  let state: State = { currentDate: args.matches[0]?.date ?? '1970-01-01' }
-
   const sockets = new Set<WebSocket>()
-
-  const setCurrentDate = (d: string) => {
-    state = { ...state, currentDate: d }
-  }
 
   const addConnection = async (ws: WebSocket) => {
     sockets.add(ws)
@@ -114,8 +106,6 @@ export const createMessageGenerator = (args: {
   }
 
   const broadcast = async (payload: WsPayload) => {
-    if (sockets.size === 0) return
-
     for (const ws of Array.from(sockets)) {
       if (!isOpen(ws)) {
         await removeConnection(ws)
@@ -126,50 +116,26 @@ export const createMessageGenerator = (args: {
     }
   }
 
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
   const start = async () => {
-    while (true) {
-      try {
-        await prune()
-
-        if (sockets.size === 0) {
-          await new Promise((r) => setTimeout(r, 1000))
-          continue
-        }
-
-        const today = state.currentDate
-        const todays = args.matches.filter((m) => m.date === today)
-
-        const maybeCL = Math.random() < cfg.championsLeagueRate ? [championsLeagueMatch(args.clubsByName, today)] : []
-
-        const normalized = [...todays, ...maybeCL].map(normalizeMatch(args.clubsByName, cfg))
-
-        if (normalized.length > 0) {
-          const payload: WsPayload = normalized.length === 1 ? normalized[0]! : normalized
-          await broadcast(payload)
-        }
-
-        await new Promise((r) => setTimeout(r, cfg.dayDurationMs))
-
-        const next = addDaysYmd(state.currentDate, 1)
-        setCurrentDate(next)
-
-        const last = args.matches[args.matches.length - 1]?.date
-        if (last && isAfterYmd(state.currentDate, last)) {
-          await broadcast({ type: 'season_finished' })
-          for (const ws of Array.from(sockets)) await removeConnection(ws)
-          setCurrentDate(addDaysYmd(args.matches[0]!.date, -2))
-        }
-      } catch {
-        await new Promise((r) => setTimeout(r, 500))
+    for (const match of args.matches) {
+      await prune()
+      if (sockets.size === 0) {
+        await sleep(1000)
+        continue
       }
+
+      const normalized = normalizeMatch(args.clubsByName, cfg)(match)
+      await broadcast(normalized)
+
+      await sleep(100)
     }
   }
 
   return {
     addConnection,
     removeConnection,
-    start,
-    getCurrentDate: () => state.currentDate,
-    setCurrentDate
+    start
   }
 }

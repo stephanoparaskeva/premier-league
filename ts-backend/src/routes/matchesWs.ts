@@ -13,34 +13,13 @@ type WebSocketConnection = {
   readonly socket: WebSocket
 }
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
 export const matchesWsRoutes =
   ({ generator, matches }: Deps): FastifyPluginAsync =>
   async (app: FastifyInstance) => {
     app.get('/ws', { websocket: true }, async (ws: WebSocket, _req: FastifyRequest) => {
-
-      const delayMs = 1000 + Math.random() * 2000
-      app.log.info({ delayMs }, 'Accepting connection after delay')
-      await sleep(delayMs)
-
       await generator.addConnection(ws)
 
-      ws.on('message', async (buf: { toString(): string }) => {
-        const msg = buf.toString()
-        if (msg === 'restart') {
-          const start = matches[0]?.date
-          if (!start) return
-          generator.setCurrentDate(addDaysYmd(start, -2))
-        }
-      })
-
-      ws.on('close', async () => {
-        await generator.removeConnection(ws)
-      })
-
-      ws.on('error', async () => {
-        await generator.removeConnection(ws)
-      })
+      ws.on('close', async () => generator.removeConnection(ws))
+      ws.on('error', async () => generator.removeConnection(ws))
     })
   }
